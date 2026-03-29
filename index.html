@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>企业年报申报 & 税务状态查询 - 操作引导</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    
+    .alert {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .alert.danger {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+    
+    .alert h3 {
+      color: #856404;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    
+    .alert.danger h3 {
+      color: #c62828;
+    }
+    
+    .alert p {
+      color: #333;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
+    
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 14px; color: #666; margin-bottom: 6px; }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .form-group input:focus { outline: none; border-color: #667eea; }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #666;
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { background: #e0e0e0; }
+    
+    .guide-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .guide-box h4 {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .guide-box ol {
+      padding-left: 20px;
+      color: #666;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    
+    .link-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      margin: 4px;
+    }
+    
+    .copy-btn {
+      background: #e8eaf6;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #667eea;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    
+    .credit-code-display {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #e8f5e9;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .credit-code-display span {
+      flex: 1;
+      font-size: 16px;
+      font-weight: bold;
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .feature {
+      text-align: center;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+    
+    .feature-icon { font-size: 32px; margin-bottom: 8px; }
+    .feature h4 { font-size: 14px; color: #333; margin-bottom: 4px; }
+    .feature p { font-size: 12px; color: #999; }
+    
+    .footer {
+      text-align: center;
+      color: white;
+      font-size: 12px;
+      margin-top: 20px;
+      opacity: 0.8;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; }
+    
+    .hidden { display: none; }
+    
+    .province-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    
+    .province-btn {
+      padding: 10px 5px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    
+    .province-btn:hover { border-color: #667eea; background: #f8f9ff; }
+    .province-btn.selected { border-color: #667eea; background: #667eea; color: white; }
+    
+    .province-select-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed #e0e0e0;
+    }
+    
+    @media (max-width: 480px) {
+      .province-grid { grid-template-columns: repeat(3, 1fr); }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="alert danger">
+        <h3>⚠️ 紧急提醒：3月31日截止！</h3>
+        <p>每年3月31日是上一年度税务申报的最后期限。逾期未申报将产生<strong>罚款</strong>！</p>
+      </div>
+      
+      <div class="alert">
+        <h3>📢 重要变化：2025年新执照注意！</h3>
+        <p><strong>你的税务可能已被自动开通</strong>！部分地区2025年新注册的企业，工商系统会自动同步到税务系统，部分地区往年旧执照也在批量自动开通税务，很多人以为没开通不用申报，结果就是过了申报期，被罚款还要去税务局排队补报！</p>
+      </div>
+      
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">📝</div>
+          <h4>工商年报</h4>
+          <p>每年6月30日前完成</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🏛️</div>
+          <h4>税务申报</h4>
+          <p>每年3月31日前完成</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="section-title">第一步：输入统一社会信用代码</div>
+      <div class="form-group">
+        <label>统一社会信用代码（18位，输入后自动识别省份）</label>
+        <input type="text" id="creditCodeInput" placeholder="请输入18位信用代码" maxlength="18">
+      </div>
+      
+      <div id="identifiedInfo" class="credit-code-display hidden">
+        <span id="identifiedProvince"></span>
+        <button class="copy-btn" onclick="copyCode(document.getElementById('creditCodeInput').value)">复制</button>
+      </div>
+      
+      <div class="province-select-section">
+        <div class="section-title" style="font-size: 16px;">或者手动选择省份</div>
+        <div class="province-grid" id="provinceGrid"></div>
+      </div>
+      
+      <div class="section-title" style="margin-top: 20px;">第二步：填写企业名称（选填）</div>
+      <div class="form-group">
+        <input type="text" id="enterpriseName" placeholder="请输入企业名称（方便识别）">
+      </div>
+      
+      <button class="btn btn-primary" id="startBtn" onclick="startGuide()" disabled>
+        🚀 开始操作引导
+      </button>
+    </div>
+    
+    <div class="card" id="guideSection" style="display: none;">
+      <div class="section-title" id="guideTitle">📋 操作引导</div>
+      <div id="guideContent"></div>
+    </div>
+    
+    <div class="footer">
+      <p>企业年报 & 税务状态查询 操作助手</p>
+      <p style="margin-top: 4px;">如有疑问，请咨询当地工商/税务部门</p>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast"></div>
+  
+  <script>
+    let selectedProvince = null;
+    
+    const provinces = {
+      "110000": "北京", "120000": "天津", "130000": "河北", "140000": "山西",
+      "150000": "内蒙", "210000": "辽宁", "220000": "吉林", "230000": "黑龙江",
+      "310000": "上海", "320000": "江苏", "330000": "浙江", "340000": "安徽",
+      "350000": "福建", "360000": "江西", "370000": "山东", "410000": "河南",
+      "420000": "湖北", "430000": "湖南", "440000": "广东", "450000": "广西",
+      "460000": "海南", "500000": "重庆", "510000": "四川", "520000": "贵州",
+      "530000": "云南", "540000": "西藏", "610000": "陕西", "620000": "甘肃",
+      "630000": "青海", "640000": "宁夏", "650000": "新疆", "660000": "兵团"
+    };
+    
+    const provinceData = {
+      "110000": { tax: "https://etax.beijing.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://wsnb.scjgj.beijing.gov.cn/wsnb/sydq/loginSydqAction!sydq.dhtml", gsxtReg: "https://wsnb.scjgj.beijing.gov.cn/wsnb/user_register/registerAction!register_invid.dhtml" },
+      "120000": { tax: "https://etax.tianjin.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://credit.scjg.tj.gov.cn/gsnb/main#a_bottom", gsxtReg: "https://credit.scjg.tj.gov.cn/gsnb/nblogin/register" },
+      "130000": { tax: "https://etax.hebei.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "http://www.hebscztxyxx.gov.cn/notice/user/popup_login", gsxtReg: "" },
+      "140000": { tax: "https://etax.shanxi.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "http://183.201.228.10:9082/ECPS/index.jspx", gsxtReg: "http://183.201.228.10:9082/ECPS/liaisonRegister.jspx" },
+      "150000": { tax: "https://etax.neimenggu.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://amr.nmg.gov.cn/aiceps/#/", gsxtReg: "http://117.161.154.157:7011/psout/jsp/gcloud/psout/network/register.jsp" },
+      "210000": { tax: "https://etax.liaoning.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://218.60.146.147/entPublicitySC/entPublicityDC/entPublicity/search/qysfyzlogin.jsp", gsxtReg: "https://218.60.146.147/entPublicitySC/entPublicityDC/entPublicity/search/zclly.jsp" },
+      "220000": { tax: "https://etax.jilin.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "http://36.135.6.168/EntLoginFc.html", gsxtReg: "" },
+      "230000": { tax: "https://etax.heilongjiang.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.hlj.gov.cn/login.jspx", gsxtReg: "https://gsxt.hlj.gov.cn/liaisonRegister.jspx" },
+      "310000": { tax: "https://etax.shanghai.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://fw.scjgj.sh.gov.cn/noticerpt/user/popup_login?limit=2", gsxtReg: "" },
+      "320000": { tax: "https://etax.jiangsu.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://scjg.jszwfw.gov.cn/province/loginReport.jsp", gsxtReg: "" },
+      "330000": { tax: "https://etax.zhejiang.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gthnb.zjzwfw.gov.cn/reg/client/login/fillindexLoginPage/5", gsxtReg: "https://gthnb.zjzwfw.gov.cn/reg/client/login/phoneapply/publist?entage=0" },
+      "340000": { tax: "https://etax.anhui.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gs.ah-amr.cn/gsxt/login.jspx", gsxtReg: "https://gs.ah-amr.cn/gsxt/liaisonRegister.jspx" },
+      "350000": { tax: "https://etax.fujian.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://220.160.53.129:8192/cear-front/#/login", gsxtReg: "" },
+      "360000": { tax: "https://etax.jiangxi.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.amr.jiangxi.gov.cn/gsxt.nb/html/login/index.html", gsxtReg: "https://gsxt.amr.jiangxi.gov.cn/gsxt.nb/html/register/index.html" },
+      "370000": { tax: "https://etax.shandong.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.amr.shandong.gov.cn:8999/auth/pub/login", gsxtReg: "https://gsxt.amr.shandong.gov.cn:8999/auth/pub/user/registold" },
+      "410000": { tax: "https://etax.henan.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "http://222.143.21.123/index.jspx", gsxtReg: "http://222.143.21.123/ECPS/liaisonRegister.jspx" },
+      "420000": { tax: "https://etax.hubei.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://scjg.hubei.gov.cn/hbgsxt/#/layout/login", gsxtReg: "https://scjg.hubei.gov.cn/hbgsxt/#/layout/register" },
+      "430000": { tax: "https://etax.hunan.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.amr.hunan.gov.cn:8001/noticerpt/user/popup_login", gsxtReg: "" },
+      "440000": { tax: "https://etax.guangdong.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.amr.gd.gov.cn/aiceps/#/login/index", gsxtReg: "https://gsxt.amr.gd.gov.cn/aiceps/#/login/register" },
+      "450000": { tax: "https://etax.guangxi.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gxqyxygs.scjdglj.gxzf.gov.cn:8443/nb/sydq/loginSydqAction!sydq.dhtml", gsxtReg: "https://gxqyxygs.scjdglj.gxzf.gov.cn:8443/nb/user_register/registerAction!register_xj_jsp.dhtml" },
+      "460000": { tax: "https://etax.hainan.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "http://218.77.183.36:1888/login.jspx", gsxtReg: "http://218.77.183.36:1888/liaisonRegister.jspx" },
+      "500000": { tax: "https://etax.chongqing.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.scjgj.cq.gov.cn/gstb/login.html?time=2018", gsxtReg: "https://gsxt.scjgj.cq.gov.cn/gstb/regist.html" },
+      "510000": { tax: "https://etax.sichuan.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "http://182.131.3.111:8000/noticerpt/user/popup_login", gsxtReg: "" },
+      "520000": { tax: "https://etax.guizhou.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.amr.guizhou.gov.cn/login.jspx", gsxtReg: "https://gsxt.amr.guizhou.gov.cn/liaisonRegister.jspx" },
+      "530000": { tax: "https://etax.yunnan.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://amr.yn.gov.cn/notice/user/popup_login", gsxtReg: "" },
+      "540000": { tax: "https://etax.xizang.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://weixin.amr.xizang.gov.cn/index.jspx", gsxtReg: "https://weixin.amr.xizang.gov.cn/liaisonRegister.jspx" },
+      "610000": { tax: "https://etax.shaanxi.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://snamr.shaanxi.gov.cn:7101/xxsb/login.do?method=enterLoginTemp", gsxtReg: "https://snamr.shaanxi.gov.cn:7101/xxsb/login.do?method=setQylly" },
+      "620000": { tax: "https://etax.gansu.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsnb.scjg.gansu.gov.cn/ECPS/index.jspx", gsxtReg: "https://gsnb.scjg.gansu.gov.cn/ECPS/liaisonRegister.jspx" },
+      "630000": { tax: "https://etax.qinghai.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://scjgj-gsxt.qinghai.gov.cn:8082/login.do?method=enterLoginTemp", gsxtReg: "" },
+      "640000": { tax: "https://etax.ningxia.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://gsxt.scjg.nx.gov.cn:9080/ECPS/login.jspx", gsxtReg: "https://gsxt.scjg.nx.gov.cn:9080/ECPS/liaisonRegister.jspx" },
+      "650000": { tax: "https://etax.xinjiang.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://nb.scjgj.xinjiang.gov.cn/nbtb/main/login?redirect=%2Fmain%2Fnb", gsxtReg: "https://nb.scjgj.xinjiang.gov.cn/nbtb/main/gtllyzc" },
+      "660000": { tax: "https://etax.xinjiang.chinatax.gov.cn:8443/xxbg/view/zhsffw/#/query/nsrztcx", gsxt: "https://nb.sjj.xjbt.gov.cn/sydq/loginSydqAction!sydq.dhtml", gsxtReg: "https://nb.sjj.xjbt.gov.cn/user_register/registerAction!register_xj_jsp.dhtml" }
+    };
+    
+    function initProvinceGrid() {
+      const grid = document.getElementById('provinceGrid');
+      for (const [code, name] of Object.entries(provinces)) {
+        const btn = document.createElement('button');
+        btn.className = 'province-btn';
+        btn.textContent = name;
+        btn.onclick = () => selectProvince(code, name, btn);
+        grid.appendChild(btn);
+      }
+    }
+    
+    function selectProvince(code, name, btn) {
+      document.querySelectorAll('.province-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedProvince = code;
+      document.getElementById('startBtn').disabled = false;
+      
+      // 显示已选择的省份
+      document.getElementById('identifiedInfo').classList.remove('hidden');
+      document.getElementById('identifiedProvince').textContent = '已选择：' + name;
+      
+      // 清空信用代码输入（因为手动选择了省份）
+      document.getElementById('creditCodeInput').value = '';
+    }
+    
+    document.getElementById('creditCodeInput').addEventListener('input', function() {
+      const code = this.value.toUpperCase();
+      this.value = code;
+      
+      if (code.length === 18) {
+        // 从信用代码第3-4位提取省份代码
+        const provinceCode = code.substring(2, 4) + '0000';
+        if (provinces[provinceCode]) {
+          selectedProvince = provinceCode;
+          document.getElementById('identifiedProvince').textContent = '自动识别：' + provinces[provinceCode];
+          document.getElementById('identifiedInfo').classList.remove('hidden');
+          document.querySelectorAll('.province-btn').forEach(b => b.classList.remove('selected'));
+          document.getElementById('startBtn').disabled = false;
+        }
+      } else if (code.length < 18) {
+        // 输入不完整时，不清除已选省份，但也不强制要求
+        if (selectedProvince) {
+          // 保持之前的选中状态
+        }
+      }
+    });
+    
+    function startGuide() {
+      const enterpriseName = document.getElementById('enterpriseName').value.trim();
+      const creditCode = document.getElementById('creditCodeInput').value.trim();
+      
+      if (!selectedProvince) {
+        showToast('请先输入信用代码或选择省份');
+        return;
+      }
+      
+      const data = provinceData[selectedProvince];
+      if (!data) return;
+      
+      document.getElementById('guideSection').style.display = 'block';
+      document.getElementById('guideTitle').textContent = `📋 ${provinces[selectedProvince]} - 操作引导`;
+      
+      let html = `
+        <div class="guide-box">
+          <h4>📌 您当前操作的企业：${enterpriseName || '（未填写）'}</h4>
+          ${creditCode ? `<p>信用代码：<strong>${creditCode}</strong> <button class="copy-btn" onclick="copyCode('${creditCode}')">复制</button></p>` : ''}
+        </div>
+        
+        <div class="guide-box">
+          <h4>第一步：查询税务状态（判断是否需要申报）</h4>
+          <ol>
+            <li>点击下方按钮打开税务局查询页面</li>
+            <li>输入信用代码和验证码</li>
+            <li>查看结果：
+              <ul style="margin-top:8px;">
+                <li>✅ 显示「正常/非正常/注销」= 已开通，需要申报</li>
+                <li>❌ 显示「查无此纳税人」= 未开通，暂不需要申报</li>
+              </ul>
+            </li>
+          </ol>
+          <div style="margin-top:12px;">
+            <a href="${data.tax}" target="_blank" class="link-btn">🔍 打开税务局查询</a>
+          </div>
+        </div>
+        
+        <div class="guide-box">
+          <h4>第二步：工商年报填报（如需申报）</h4>
+          <ol>
+            <li>如从未填报过年报，需要先注册联络员</li>
+            <li>登录后按提示填写年报（零申报只需填写基本信息）</li>
+            <li>提交完成年报</li>
+          </ol>
+          <div style="margin-top:12px;">
+            ${data.gsxtReg ? `<a href="${data.gsxtReg}" target="_blank" class="link-btn">📝 注册联络员</a>` : ''}
+            <a href="${data.gsxt}" target="_blank" class="link-btn">📋 年报填报入口</a>
+          </div>
+        </div>
+        
+        <div class="alert">
+          <h3>💡 温馨提示</h3>
+          <p>• 税务申报截止日期：每年3月31日<br>
+          • 工商年报截止日期：每年6月30日<br>
+          • 操作过程中如有问题，请咨询当地12366税务热线</p>
+        </div>
+      `;
+      
+      document.getElementById('guideContent').innerHTML = html;
+      document.getElementById('guideSection').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function copyCode(code) {
+      navigator.clipboard.writeText(code).then(() => showToast('已复制'));
+    }
+    
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+    
+    initProvinceGrid();
+  </script>
+</body>
+</html>
